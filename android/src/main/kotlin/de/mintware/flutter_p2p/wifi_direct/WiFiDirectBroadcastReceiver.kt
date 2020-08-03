@@ -20,6 +20,7 @@ import android.net.wifi.p2p.WifiP2pManager
 import de.mintware.flutter_p2p.Protos
 import de.mintware.flutter_p2p.utility.ProtoHelper
 import io.flutter.plugin.common.EventChannel
+import android.util.Log;
 
 class WiFiDirectBroadcastReceiver(private val manager: WifiP2pManager,
                                   private val channel: WifiP2pManager.Channel,
@@ -30,13 +31,17 @@ class WiFiDirectBroadcastReceiver(private val manager: WifiP2pManager,
                                   private val discoveryChangedSink: EventChannel.EventSink?
 ) : BroadcastReceiver() {
 
+    companion object {
+        const val TAG = "Flutter P2P"
+    }
+
     private val peerListListener = WiFiDirectPeerListListener(peersChangedSink);
 
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent == null) {
             return;
         }
-
+        Log.v(TAG, intent.action.toString())
         when (intent.action) {
             WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION -> onStateChanged(intent)
             WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION -> onPeersChanged()
@@ -86,6 +91,7 @@ class WiFiDirectBroadcastReceiver(private val manager: WifiP2pManager,
     }
 
     private fun onPeersChanged() {
+        Log.v(TAG, "peers changed")
         manager.requestPeers(channel, peerListListener)
     }
 

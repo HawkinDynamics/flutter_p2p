@@ -23,19 +23,18 @@ class WiFiDirectPeerListListener(private val peersChangedSink: EventChannel.Even
         const val TAG = "Flutter P2P"
     }
 
-    private val peers = mutableListOf<WifiP2pDevice>()
+ 
 
     override fun onPeersAvailable(peerList: WifiP2pDeviceList) {
         val refreshedPeers = peerList.deviceList
-        if ( refreshedPeers != peers) {
-            peers.clear()
-
-            if (refreshedPeers != null) {
-                peers.addAll(refreshedPeers)
-            }
-
-            peersChangedSink?.success(ProtoHelper.create(peers).toByteArray());
+        val peers = mutableListOf<WifiP2pDevice>()
+        
+        if (refreshedPeers != null) {
+            Log.d(TAG, "Devices found")
+            peers.addAll(refreshedPeers)
         }
+
+        peersChangedSink?.success(ProtoHelper.create(peers).toByteArray());
 
         if (peers.isEmpty()) {
             Log.d(TAG, "No devices found")
